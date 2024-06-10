@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction System</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #2a2a3d;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px red, 0 0 20px rgb(45, 129, 45);
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .file-upload-label {
+            display: block;
+            border: 2px dashed #4a4a6a;
+            border-radius: 10px;
+            padding: 40px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload-label:hover {
+            border-color: #6a6a8a;
+        }
+
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .upload-button {
+            background-color: #4a4a6a;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .upload-button:hover {
+            background-color: #6a6a8a;
+        }
+
+        .information {
+            text-align: left;
+        }
+
+        .information h2 {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        .information p, .information ul {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .information ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .information ul li {
+            margin-bottom: 10px;
+        }
+
+        img {
+            height: 200px;
+            width: 200px;
+            border: 2px solid black;
+            box-shadow: 0 0 3px red, 0 0 5px rgb(45, 129, 45);
+        }
+        #result
+        {
+           color:white;
+           background-color:black;
+           font-size:20;
+           font-family:Arial;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Heart Disease Prediction System</h1>
+    
+        <div class="upload-section">
+            <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                <label for="file-upload" class="file-upload-label">
+                    <input type="file" id="file-upload" name="file" class="file-upload-input" accept=".csv">
+                    <div class="upload-content">
+                        <p>You can drag and drop CSV files to upload</p>
+                        <button type="submit" class="upload-button" id="upload-button">Submit</button>
+                    </div>
+                </label>
+            </form>
+        </div>
+        <div class="information">
+            <h2>About Heart Disease</h2>
+            <p>Heart disease describes a range of conditions that affect your heart. Diseases under the heart disease umbrella include blood vessel diseases, such as coronary artery disease; heart rhythm problems (arrhythmias); and heart defects you're born with (congenital heart defects), among others.</p>
+            <h2>Prevention Tips</h2>
+            <ul>
+                <li>Don't smoke or use tobacco.</li>
+                <li>Exercise for about 30 minutes on most days of the week.</li>
+                <li>Eat a heart-healthy diet.</li>
+                <li>Maintain a healthy weight.</li>
+                <li>Get good quality sleep.</li>
+                <li>Manage stress.</li>
+                <li>Get regular health screenings.</li>
+            </ul>
+            <h2>Additional Information</h2>
+            <p>Heart disease is the leading cause of death globally, but it can often be prevented by living a healthy lifestyle. Regular physical activity, a balanced diet, and regular medical checkups are essential in preventing heart disease.</p>
+        </div>
+        <div id="result"></div>
+    </div>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file-upload');
+            const file = fileInput.files[0];
+            if (file) {
+                const formData = new FormData(this);
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        const resultDiv = document.getElementById('result');
+                        resultDiv.innerHTML = `<p id="result">Accuracy: ${(data.accuracy * 100).toFixed(2)}%</p>
+                                               <p id="result>Prediction: ${data.prediction}</p>
+                                               <p id="result>Randomly selected input: ${JSON.stringify(data.random_input)}</p>`;
+
+                                              
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert('Please upload a valid CSV file.');
+            }
+        });
+    </script>
+</body>
+</html>
